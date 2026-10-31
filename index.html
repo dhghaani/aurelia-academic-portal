@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AURELIA — سامانه مینیمال مدیریت و تحویل پروژه‌های دانشگاهی</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=JetBrains+Mono:wght@400;500&family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Vazirmatn', 'system-ui', 'sans-serif'],
+            serif: ['Cormorant Garamond', 'Georgia', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            obsidian: {
+              950: '#090A0D',
+              900: '#101218',
+              800: '#171A23',
+              700: '#222634',
+            },
+            gold: {
+              300: '#E5CFA1',
+              400: '#D4B475',
+              500: '#C5A059',
+              600: '#9E7B36',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --bg-main: #090A0D;
+      --bg-surface: #11131A;
+      --bg-subsurface: rgba(0, 0, 0, 0.26);
+      --bg-elevated: #171A24;
+      --border-lux: rgba(197, 160, 89, 0.18);
+      --border-lux-hover: rgba(197, 160, 89, 0.48);
+      --text-primary: #F4F1EA;
+      --text-secondary: #D0D5E4;
+      --text-muted: #8E95AA;
+      --gold-accent: #C5A059;
+      --gold-pill-bg: rgba(197, 160, 89, 0.14);
+      --gold-pill-border: rgba(197, 160, 89, 0.34);
+      --card-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.5);
+    }
+    html.light {
+      --bg-main: #F6F5F0;
+      --bg-surface: #FFFFFF;
+      --bg-subsurface: #F2EFE9;
+      --bg-elevated: #F7F5F0;
+      --border-lux: rgba(150, 118, 52, 0.22);
+      --border-lux-hover: rgba(150, 118, 52, 0.55);
+      --text-primary: #171921;
+      --text-secondary: #373D4D;
+      --text-muted: #646B7D;
+      --gold-accent: #8A651B;
+      --gold-pill-bg: rgba(180, 140, 60, 0.14);
+      --gold-pill-border: rgba(150, 118, 52, 0.36);
+      --card-shadow: 0 8px 24px -8px rgba(23, 25, 33, 0.07);
+    }
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      transition: background-color 0.28s ease, color 0.28s ease;
+    }
+    .lux-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-lux);
+      box-shadow: var(--card-shadow);
+      transition: all 0.22s ease;
+    }
+    .lux-subcard {
+      background-color: var(--bg-subsurface);
+      border: 1px solid var(--border-lux);
+      transition: all 0.2s ease;
+    }
+    .lux-card-interactive:hover {
+      border-color: var(--border-lux-hover);
+      transform: translateY(-1px);
+    }
+    .lux-input {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-lux);
+      color: var(--text-primary);
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+    .lux-input::placeholder {
+      color: var(--text-muted);
+    }
+    .lux-input:focus {
+      outline: none;
+      border-color: var(--gold-accent);
+    }
+    .gold-btn {
+      background: linear-gradient(135deg, #D4B475 0%, #B38B40 100%);
+      color: #090A0D;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    html.light .gold-btn {
+      background: linear-gradient(135deg, #B88E3E 0%, #966F23 100%);
+      color: #FFFFFF;
+    }
+    .gold-btn:hover {
+      filter: brightness(1.06);
+      box-shadow: 0 8px 24px -6px rgba(197, 160, 89, 0.45);
+    }
+    .gold-text {
+      color: var(--gold-accent);
+    }
+    .gold-pill {
+      background-color: var(--gold-pill-bg);
+      color: var(--gold-accent);
+      border: 1px solid var(--gold-pill-border);
+    }
+    .text-primary-lux {
+      color: var(--text-primary);
+    }
+    .text-secondary-lux {
+      color: var(--text-secondary);
+    }
+    .text-muted-lux {
+      color: var(--text-muted);
+    }
+    /* Standard High-Contrast Status Badges for Dark & Light Mode */
+    .badge-approved {
+      background-color: rgba(16, 185, 129, 0.15);
+      color: #6EE7B7;
+      border: 1px solid rgba(16, 185, 129, 0.32);
+    }
+    html.light .badge-approved {
+      background-color: #DCFCE7;
+      color: #065F46;
+      border: 1px solid #86EFAC;
+    }
+    .badge-revision {
+      background-color: rgba(245, 158, 11, 0.15);
+      color: #FCD34D;
+      border: 1px solid rgba(245, 158, 11, 0.32);
+    }
+    html.light .badge-revision {
+      background-color: #FEF3C7;
+      color: #92400E;
+      border: 1px solid #FDE68A;
+    }
+    .badge-pending {
+      background-color: rgba(14, 165, 233, 0.15);
+      color: #7DD3FC;
+      border: 1px solid rgba(14, 165, 233, 0.32);
+    }
+    html.light .badge-pending {
+      background-color: #E0F2FE;
+      color: #075985;
+      border: 1px solid #BAE6FD;
+    }
+    .nav-btn-inactive {
+      color: var(--text-muted);
+    }
+    .nav-btn-inactive:hover {
+      color: var(--text-primary);
+    }
+  </style>
+</head>
+<body class="min-h-screen selection:bg-gold-500/30">
+
+  <!-- ========================================================= -->
+  <!-- 1. LOGIN SCREEN (نمایش اولیه قبل از ورود به محیط سامانه)     -->
+  <!-- ========================================================= -->
+  <main id="loginView" class="min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="w-full max-w-md lux-card rounded-3xl p-8 sm:p-10 space-y-7">
+      <!-- Minimal Luxury Header -->
+      <div class="text-center space-y-2">
+        <div class="w-12 h-12 rounded-2xl gold-pill mx-auto flex items-center justify-center">
+          <span class="font-serif text-2xl font-bold gold-text">A</span>
+        </div>
+        <h1 class="font-serif text-2xl tracking-[0.2em] uppercase gold-text font-semibold">Aurelia</h1>
+        <p class="text-xs sm:text-sm text-muted-lux">سامانه مدیریت و تحویل پروژه‌های دانشگاهی</p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label for="loginUsername" class="block text-xs text-muted-lux mb-1.5">نام کاربری</label>
+          <input id="loginUsername" type="text" required autocomplete="off" placeholder="نام کاربری خود را وارد کنید" class="w-full lux-input rounded-xl px-4 py-3 text-sm font-mono" />
+        </div>
+
+        <div>
+          <label for="loginPassword" class="block text-xs text-muted-lux mb-1.5">رمز عبور</label>
+          <input id="loginPassword" type="password" required placeholder="••••••••" class="w-full lux-input rounded-xl px-4 py-3 text-sm font-mono" />
+        </div>
+
+        <p id="loginErrorMsg" class="hidden text-xs text-rose-500 font-medium text-center py-1">
+          نام کاربری یا رمز عبور اشتباه است.
+        </p>
+
+        <button type="submit" class="w-full gold-btn py-3.5 rounded-xl text-sm flex items-center justify-center gap-2">
+          <span>ورود به سامانه</span>
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <!-- ========================================================= -->
+  <!-- 2. AUTHENTICATED APPLICATION SHELL                        -->
+  <!-- ========================================================= -->
+  <div id="appView" class="hidden min-h-screen flex flex-col">
+
+    <!-- Minimal Top Header -->
+    <header class="lux-card border-t-0 border-x-0 sticky top-0 z-30">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+        <!-- Brand, Role Badge & Logged-in User's Full Name -->
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-9 h-9 rounded-xl gold-pill flex items-center justify-center shrink-0">
+            <span class="font-serif text-lg font-bold gold-text">A</span>
+          </div>
+          <div class="flex items-center gap-2 min-w-0">
+            <span id="headerRoleBadge" class="text-[11px] px-2.5 py-0.5 rounded-full gold-pill font-medium shrink-0">پنل استاد</span>
+            <div class="flex items-center gap-1.5 truncate">
+              <i data-lucide="user" class="w-3.5 h-3.5 gold-text shrink-0"></i>
+              <span id="headerUserFullName" class="text-xs sm:text-sm font-bold text-primary-lux truncate">دکتر سهراب فرزانه</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clean Navigation Tabs -->
+        <nav class="flex items-center gap-1.5">
+          <button type="button" id="navProjectsBtn" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition gold-pill">
+            لیست پروژه‌ها
+          </button>
+          <button type="button" id="navNewUploadBtn" class="hidden px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition nav-btn-inactive">
+            آپلود پروژه جدید
+          </button>
+          <button type="button" id="navAccountBtn" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition nav-btn-inactive flex items-center gap-1.5">
+            <i data-lucide="user-cog" class="w-3.5 h-3.5"></i>
+            <span>حساب کاربری</span>
+          </button>
+        </nav>
+
+        <!-- Right Controls: Theme & Logout -->
+        <div class="flex items-center gap-2 shrink-0">
+          <button type="button" id="themeSwitchBtn" class="p-2 rounded-xl lux-card hover:border-gold-500/50 text-muted-lux hover:text-gold-500" title="تغییر تم روشن / تاریک">
+            <i data-lucide="sun-moon" class="w-4 h-4"></i>
+          </button>
+          <button type="button" id="logoutBtn" class="px-3 py-2 rounded-xl lux-card hover:border-rose-500/40 text-xs text-secondary-lux hover:text-rose-500 flex items-center gap-1.5">
+            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">خروج</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 flex-1">
+
+      <!-- ===================================================== -->
+      <!-- SECTION A: PROJECTS LIST VIEW (استاد و دانشجو)         -->
+      <!-- ===================================================== -->
+      <section id="sectionProjectsList" class="space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 id="listTitleHeading" class="text-xl font-bold text-primary-lux">پروژه‌های آپلود شده دانشجویان</h2>
+            <p id="listSubtitleText" class="text-xs text-muted-lux mt-1">برای مشاهده جزئیات کامل، ارزیابی، توضیحات، تاریخچه و اعلانات روی پروژه مورد نظر کلیک کنید.</p>
+          </div>
+          <!-- Student Quick CTA to Open Upload Form -->
+          <button type="button" id="studentQuickNewProjectBtn" class="hidden gold-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm items-center gap-2 self-start sm:self-auto">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>آپلود پروژه جدید</span>
+          </button>
+        </div>
+
+        <!-- Clean Table / List Header (Desktop) -->
+        <div class="hidden sm:grid sm:grid-cols-12 px-5 py-2.5 text-xs text-muted-lux border-b border-gold-500/20">
+          <div class="col-span-4">اسم پروژه</div>
+          <div class="col-span-3" id="colPersonLabel">نام دانشجو</div>
+          <div class="col-span-2">نام کلاس</div>
+          <div class="col-span-1 text-center">ورژن</div>
+          <div class="col-span-2 text-left">وضعیت ارزیابی</div>
+        </div>
+
+        <!-- Projects Items Container -->
+        <div id="projectsListContainer" class="space-y-3">
+          <!-- Populated dynamically -->
+        </div>
+      </section>
+
+      <!-- ===================================================== -->
+      <!-- SECTION B: PROJECT DETAILS VIEW (جزئیات کامل پروژه)    -->
+      <!-- ===================================================== -->
+      <section id="sectionProjectDetail" class="hidden space-y-6">
+        <!-- Back Button & Header -->
+        <div class="flex items-center justify-between">
+          <button type="button" id="backToListBtn" class="px-3.5 py-2 rounded-xl lux-card hover:border-gold-500/50 text-xs flex items-center gap-2 text-secondary-lux">
+            <i data-lucide="arrow-right" class="w-4 h-4 gold-text"></i>
+            <span>بازگشت به لیست پروژه‌ها</span>
+          </button>
+          <span id="detailVersionBadge" class="font-mono text-xs px-3 py-1 rounded-full gold-pill">v2.1</span>
+        </div>
+
+        <!-- Core Overview Card -->
+        <div class="lux-card rounded-2xl p-6 space-y-5">
+          <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-5 border-b border-gold-500/15">
+            <div class="space-y-1.5">
+              <h2 id="detailProjectName" class="text-xl sm:text-2xl font-bold text-primary-lux"></h2>
+              <div class="flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-muted-lux">
+                <span>دانشجو: <strong id="detailStudentName" class="text-primary-lux"></strong></span>
+                <span>استاد: <strong id="detailProfName" class="text-primary-lux"></strong></span>
+                <span>کلاس: <strong id="detailClassName" class="text-primary-lux"></strong></span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 shrink-0">
+              <div class="text-left px-4 py-2 rounded-xl lux-subcard">
+                <span class="text-[11px] text-muted-lux block">نمره ارزیابی</span>
+                <span id="detailScoreDisplay" class="font-mono text-lg font-bold gold-text">19.25 / 20</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 1. توضیحات پروژه (Description) -->
+          <div class="space-y-2">
+            <h3 class="text-xs font-semibold uppercase tracking-wider gold-text flex items-center gap-1.5">
+              <i data-lucide="file-text" class="w-4 h-4"></i>
+              <span>توضیحات پروژه و فایل ارسالی</span>
+            </h3>
+            <p id="detailDescriptionText" class="text-sm text-secondary-lux leading-relaxed p-4 rounded-xl lux-subcard"></p>
+            <div class="flex items-center justify-between text-xs text-muted-lux pt-1">
+              <span id="detailFileName" class="font-mono gold-text font-medium"></span>
+              <span id="detailUpdatedTime" class="font-mono"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Two Column Grid for: Evaluation (ارزیابی) & Versioning/History (ورژن‌بندی و تاریخچه) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <!-- 2. ارزیابی (Evaluation Card) -->
+          <div class="lux-card rounded-2xl p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold gold-text flex items-center gap-2">
+                <i data-lucide="award" class="w-4 h-4"></i>
+                <span>ارزیابی و نظر استاد</span>
+              </h3>
+              <span id="detailEvalStatusBadge" class="text-xs px-2.5 py-0.5 rounded-full"></span>
+            </div>
+
+            <!-- Read-only View for Student -->
+            <div id="studentEvaluationReadView" class="space-y-3 text-sm">
+              <div class="p-4 rounded-xl lux-subcard space-y-2">
+                <div class="flex justify-between text-xs text-muted-lux">
+                  <span>نمره ثبت‌شده از ۲۰:</span>
+                  <strong id="stuViewScore" class="font-mono text-base gold-text"></strong>
+                </div>
+                <p id="stuViewComment" class="text-xs sm:text-sm text-secondary-lux leading-relaxed pt-1"></p>
+              </div>
+            </div>
+
+            <!-- Editable Grading Form for Professor -->
+            <form id="profEvaluationForm" class="hidden space-y-3.5">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label for="profScoreInput" class="block text-xs text-muted-lux mb-1">نمره (از ۲۰)</label>
+                  <input id="profScoreInput" type="number" min="0" max="20" step="0.25" required class="w-full lux-input rounded-xl px-3.5 py-2 text-sm font-mono" />
+                </div>
+                <div>
+                  <label for="profStatusSelect" class="block text-xs text-muted-lux mb-1">وضعیت تحویل</label>
+                  <select id="profStatusSelect" class="w-full lux-input rounded-xl px-3 py-2 text-xs sm:text-sm">
+                    <option value="approved">تایید نهایی</option>
+                    <option value="revision">نیاز به اصلاح</option>
+                    <option value="pending">در انتظار بررسی</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label for="profCommentInput" class="block text-xs text-muted-lux mb-1">توضیحات ارزیابی و بازخورد استاد</label>
+                <textarea id="profCommentInput" rows="3" required placeholder="نظر خود را درباره این نسخه بنویسید..." class="w-full lux-input rounded-xl p-3 text-xs sm:text-sm"></textarea>
+              </div>
+              <button type="submit" class="w-full gold-btn py-2.5 rounded-xl text-xs sm:text-sm">
+                ثبت ارزیابی و ارسال اعلان به دانشجو
+              </button>
+            </form>
+          </div>
+
+          <!-- 3. ورژن‌بندی و تاریخچه نسخه‌ها (Versioning & History) -->
+          <div class="lux-card rounded-2xl p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold gold-text flex items-center gap-2">
+                <i data-lucide="git-branch" class="w-4 h-4"></i>
+                <span>ورژن‌بندی و تاریخچه نسخه‌ها</span>
+              </h3>
+              <!-- Student can push a new version directly to this project -->
+              <button type="button" id="toggleNewVersionBoxBtn" class="hidden text-xs px-2.5 py-1 rounded-lg gold-pill hover:opacity-90">
+                + ثبت ورژن جدید
+              </button>
+            </div>
+
+            <!-- Quick New Version Mini-Form (For Student inside Detail View) -->
+            <form id="quickNewVersionForm" class="hidden p-3.5 rounded-xl lux-subcard space-y-2.5">
+              <div class="grid grid-cols-2 gap-2">
+                <input id="quickVerTag" type="text" required placeholder="ورژن جدید (مثلاً v2.2)" class="lux-input rounded-lg px-3 py-1.5 text-xs font-mono" />
+                <input id="quickVerFile" type="text" placeholder="نام فایل (مثلاً Final_v2.zip)" class="lux-input rounded-lg px-3 py-1.5 text-xs font-mono" />
+              </div>
+              <input id="quickVerNote" type="text" required placeholder="توضیحات تغییرات این نسخه..." class="w-full lux-input rounded-lg px-3 py-1.5 text-xs" />
+              <button type="submit" class="w-full gold-btn py-1.5 rounded-lg text-xs">آپلود و ثبت نسخه</button>
+            </form>
+
+            <div id="detailVersionsTimeline" class="space-y-2.5 max-h-60 overflow-y-auto pl-1">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 4. اعلانات پروژه (Project Notifications) -->
+        <div class="lux-card rounded-2xl p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold gold-text flex items-center gap-2">
+              <i data-lucide="bell" class="w-4 h-4"></i>
+              <span>اعلانات و پیام‌های این پروژه</span>
+            </h3>
+          </div>
+
+          <!-- Professor Quick Announcement Form -->
+          <form id="profSendNotifForm" class="hidden flex-col sm:flex-row gap-2.5">
+            <input id="profNotifInput" type="text" required placeholder="ارسال اعلان یا پیام جدید به دانشجو درباره این پروژه..." class="flex-1 lux-input rounded-xl px-3.5 py-2 text-xs sm:text-sm" />
+            <button type="submit" class="gold-btn px-4 py-2 rounded-xl text-xs whitespace-nowrap">
+              ارسال اعلان
+            </button>
+          </form>
+
+          <div id="detailNotificationsList" class="space-y-2">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================== -->
+      <!-- SECTION C: STUDENT NEW PROJECT UPLOAD (آپلود پروژه جدید) -->
+      <!-- ===================================================== -->
+      <section id="sectionStudentUpload" class="hidden max-w-xl mx-auto">
+        <div class="lux-card rounded-2xl p-6 sm:p-8 space-y-6">
+          <div>
+            <h2 class="text-xl font-bold gold-text">آپلود پروژه جدید</h2>
+            <p class="text-xs text-muted-lux mt-1">مشخصات پروژه را تکمیل کنید تا در کارتابل استاد ثبت شود.</p>
+          </div>
+
+          <form id="studentNewProjectForm" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="stuFullNameInput" class="block text-xs text-muted-lux mb-1.5">نام و نام خانوادگی دانشجو</label>
+                <input id="stuFullNameInput" type="text" required placeholder="مثلاً: آریا رادمنش" class="w-full lux-input rounded-xl px-3.5 py-2.5 text-sm" />
+              </div>
+              <div>
+                <label for="stuProfNameInput" class="block text-xs text-muted-lux mb-1.5">نام استاد</label>
+                <input id="stuProfNameInput" type="text" required placeholder="مثلاً: دکتر سهراب فرزانه" class="w-full lux-input rounded-xl px-3.5 py-2.5 text-sm" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="sm:col-span-2">
+                <label for="stuProjectNameInput" class="block text-xs text-muted-lux mb-1.5">اسم پروژه</label>
+                <input id="stuProjectNameInput" type="text" required placeholder="عنوان پروژه دانشگاهی" class="w-full lux-input rounded-xl px-3.5 py-2.5 text-sm" />
+              </div>
+              <div>
+                <label for="stuVersionInput" class="block text-xs text-muted-lux mb-1.5">ورژن</label>
+                <input id="stuVersionInput" type="text" required value="v1.0" placeholder="v1.0" class="w-full lux-input rounded-xl px-3.5 py-2.5 text-sm font-mono" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="stuClassNameInput" class="block text-xs text-muted-lux mb-1.5">نام کلاس / درس</label>
+                <input id="stuClassNameInput" type="text" required placeholder="مثلاً: مهندسی نرم‌افزار پیشرفته" class="w-full lux-input rounded-xl px-3.5 py-2.5 text-sm" />
+              </div>
+              <div>
+                <label for="stuFileInput" class="block text-xs text-muted-lux mb-1.5">فایل پروژه (PDF / ZIP)</label>
+                <input id="stuFileInput" type="file" class="w-full lux-input rounded-xl px-3 py-2 text-xs file:ml-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:bg-gold-500/20 file:text-amber-600 dark:file:text-gold-300 cursor-pointer" />
+              </div>
+            </div>
+
+            <div>
+              <label for="stuDescriptionInput" class="block text-xs text-muted-lux mb-1.5">توضیحات پروژه</label>
+              <textarea id="stuDescriptionInput" rows="4" required placeholder="توضیحات کامل درباره اهداف پروژه، نحوه اجرا و جزئیات این نسخه را بنویسید..." class="w-full lux-input rounded-xl p-3.5 text-sm"></textarea>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-2">
+              <button type="button" id="cancelUploadBtn" class="px-4 py-2.5 rounded-xl lux-card text-xs text-muted-lux hover:text-primary-lux">
+                انصراف
+              </button>
+              <button type="submit" class="gold-btn px-6 py-2.5 rounded-xl text-sm flex items-center gap-2">
+                <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                <span>ثبت و آپلود پروژه</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ===================================================== -->
+      <!-- SECTION D: ACCOUNT SETTINGS (مشخصات فردی، نام کاربری و رمز) -->
+      <!-- ===================================================== -->
+      <section id="sectionAccount" class="hidden max-w-md mx-auto">
+        <div class="lux-card rounded-2xl p-6 sm:p-8 space-y-6">
+          <div class="flex items-center gap-3 pb-4 border-b border-gold-500/15">
+            <div class="w-10 h-10 rounded-xl gold-pill flex items-center justify-center gold-text">
+              <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h2 class="text-lg font-bold text-primary-lux">تنظیمات حساب کاربری</h2>
+              <p id="accountRoleSub" class="text-xs text-muted-lux">ویرایش مشخصات فردی، نام کاربری و رمز عبور</p>
+            </div>
+          </div>
+
+          <form id="accountSettingsForm" class="space-y-4">
+            <div>
+              <label for="accDisplayName" class="block text-xs text-muted-lux mb-1.5">نام و نام خانوادگی (نمایش در بالای سایت)</label>
+              <input id="accDisplayName" type="text" required placeholder="نام و نام خانوادگی خود را وارد کنید" class="w-full lux-input rounded-xl px-4 py-2.5 text-sm" />
+            </div>
+
+            <div>
+              <label for="accNewUsername" class="block text-xs text-muted-lux mb-1.5">نام کاربری</label>
+              <input id="accNewUsername" type="text" required class="w-full lux-input rounded-xl px-4 py-2.5 text-sm font-mono" />
+            </div>
+
+            <div>
+              <label for="accNewPassword" class="block text-xs text-muted-lux mb-1.5">رمز عبور</label>
+              <input id="accNewPassword" type="text" required class="w-full lux-input rounded-xl px-4 py-2.5 text-sm font-mono" />
+            </div>
+
+            <button type="submit" class="w-full gold-btn py-3 rounded-xl text-sm">
+              ذخیره مشخصات و اطلاعات حساب
+            </button>
+          </form>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Minimal Toast Notification -->
+  <div id="toastBox" class="fixed bottom-5 left-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="lux-card rounded-xl px-4 py-3 border border-gold-500/50 shadow-xl flex items-center gap-2.5">
+      <i data-lucide="check-circle" class="w-4 h-4 gold-text"></i>
+      <span id="toastText" class="text-xs font-medium text-primary-lux"></span>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================
+    // STATE MANAGEMENT (با قابلیت تغییر مشخصات، نام کاربری و رمز)
+    // =========================================================
+    const state = {
+      currentUserRole: null, // 'professor' | 'student'
+      selectedProjectId: null,
+      accounts: {
+        professor: { username: 'admin', password: '123', displayName: 'دکتر سهراب فرزانه' },
+        student: { username: 'stu', password: '321', displayName: 'آریا رادمنش' }
+      },
+      projects: [
+        {
+          id: 'PRJ-01',
+          studentName: 'آریا رادمنش',
+          professorName: 'دکتر سهراب فرزانه',
+          className: 'یادگیری عمیق پیشرفته',
+          projectName: 'تشخیص تعاملات دارویی با شبکه عصبی گراف',
+          version: 'v2.1',
+          fileName: 'GNN_Drug_Interaction_v2.1.zip',
+          updatedAt: '۱۴۰۵/۰۸/۰۸ - ۱۴:۲۰',
+          description: 'در این پروژه معماری شبکه عصبی گراف (GAT) برای پیش‌بینی تداخلات دارویی پیاده‌سازی شده است. در نسخه v2.1 خطای مدل روی دیتاست استاندارد ۱۵ درصد کاهش یافته و گزارش PDF کامل پیوست شده است.',
+          status: 'approved', // 'approved' | 'revision' | 'pending'
+          score: 19.25,
+          evalComment: 'پیاده‌سازی بسیار تمیز و مستندات علمی کامل است. نتایج نسخه ۲.۱ کاملاً مورد تایید است.',
+          versionsHistory: [
+            { ver: 'v2.1', date: '۱۴۰۵/۰۸/۰۸', file: 'GNN_Drug_Interaction_v2.1.zip', note: 'بهینه‌سازی مصرف حافظه و تکمیل گزارش نهایی' },
+            { ver: 'v1.0', date: '۱۴۰۵/۰۷/۱۵', file: 'GNN_Baseline_v1.0.zip', note: 'ارسال نسخه پایه و پروپوزال اولیه' }
+          ],
+          notifications: [
+            { text: 'نسخه v2.1 توسط استاد بررسی و با نمره ۱۹.۲۵ تایید نهایی شد.', date: '۱۴۰۵/۰۸/۰۸ - ۱۶:۰۰', sender: 'استاد' },
+            { text: 'نسخه v2.1 توسط دانشجو در سامانه بارگذاری گردید.', date: '۱۴۰۵/۰۸/۰۸ - ۱۴:۲۰', sender: 'سیستم' }
+          ]
+        },
+        {
+          id: 'PRJ-02',
+          studentName: 'آریا رادمنش',
+          professorName: 'دکتر ماندانا کاظمی',
+          className: 'سیستم‌های توزیع‌شده',
+          projectName: 'موتور اجماع توزیع‌شده مقاوم در برابر خطا',
+          version: 'v1.4',
+          fileName: 'Raft_Consensus_v1.4.zip',
+          updatedAt: '۱۴۰۵/۰۸/۰۷ - ۱۱:۱۰',
+          description: 'پیاده‌سازی الگوریتم اجماع Raft به زبان Go همراه با شبیه‌سازی قطع ارتباط نودها در شبکه توزیع‌شده.',
+          status: 'revision',
+          score: 17.00,
+          evalComment: 'عملکرد پایه عالی است، اما لطفاً لاگ تست استرس ۵۰ نود همزمان را به نسخه بعدی اضافه کنید.',
+          versionsHistory: [
+            { ver: 'v1.4', date: '۱۴۰۵/۰۸/۰۷', file: 'Raft_Consensus_v1.4.zip', note: 'افزودن مکانیزم بازیابی خودکار لیدر' },
+            { ver: 'v1.0', date: '۱۴۰۵/۰۷/۲۰', file: 'Raft_Core_v1.0.zip', note: 'پیاده‌سازی اولیه پروتکل پیام‌رسانی' }
+          ],
+          notifications: [
+            { text: 'استاد داور درخواست اصلاحیه برای نسخه v1.4 ثبت کرد (نمره موقت: ۱۷ از ۲۰).', date: '۱۴۰۵/۰۸/۰۷ - ۱۵:۳۰', sender: 'استاد' }
+          ]
+        },
+        {
+          id: 'PRJ-03',
+          studentName: 'سارا محمدی',
+          professorName: 'دکتر سهراب فرزانه',
+          className: 'مهندسی نرم‌افزار پیشرفته',
+          projectName: 'معماری میکروسرویس سامانه بانکداری مدرن',
+          version: 'v1.0',
+          fileName: 'CoreBanking_Microservices_v1.0.pdf',
+          updatedAt: '۱۴۰۵/۰۸/۰۹ - ۰۹:۴۵',
+          description: 'طراحی دیاگرام‌های UML، معماری Event-Driven با Kafka و پیاده‌سازی سرویس احراز هویت متمرکز.',
+          status: 'pending',
+          score: 0,
+          evalComment: 'هنوز توسط استاد ارزیابی نشده است.',
+          versionsHistory: [
+            { ver: 'v1.0', date: '۱۴۰۵/۰۸/۰۹', file: 'CoreBanking_Microservices_v1.0.pdf', note: 'تحویل نسخه اول معماری و مستندات' }
+          ],
+          notifications: [
+            { text: 'پروژه جدید توسط سارا محمدی آپلود شد و منتظر بررسی استاد است.', date: '۱۴۰۵/۰۸/۰۹ - ۰۹:۴۵', sender: 'سیستم' }
+          ]
+        }
+      ]
+    };
+
+    // Load saved credentials if modified earlier
+    try {
+      const savedAcc = localStorage.getItem('aurelia_accounts_v2');
+      if (savedAcc) {
+        state.accounts = JSON.parse(savedAcc);
+      }
+    } catch (e) {}
+
+    function saveAccounts() {
+      try {
+        localStorage.setItem('aurelia_accounts_v2', JSON.stringify(state.accounts));
+      } catch (e) {}
+    }
+
+    function showToast(msg) {
+      const box = document.getElementById('toastBox');
+      document.getElementById('toastText').textContent = msg;
+      box.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        box.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+
+    function getStatusBadge(status) {
+      if (status === 'approved') {
+        return { label: 'تایید نهایی', cls: 'badge-approved' };
+      }
+      if (status === 'revision') {
+        return { label: 'نیاز به اصلاح', cls: 'badge-revision' };
+      }
+      return { label: 'در انتظار بررسی', cls: 'badge-pending' };
+    }
+
+    // =========================================================
+    // NAVIGATION & VIEW SWITCHING
+    // =========================================================
+    function showSection(sectionId) {
+      ['sectionProjectsList', 'sectionProjectDetail', 'sectionStudentUpload', 'sectionAccount'].forEach(id => {
+        document.getElementById(id).classList.toggle('hidden', id !== sectionId);
+      });
+
+      // Highlight active nav button
+      const navProjects = document.getElementById('navProjectsBtn');
+      const navUpload = document.getElementById('navNewUploadBtn');
+      const navAccount = document.getElementById('navAccountBtn');
+
+      const activeCls = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition gold-pill flex items-center gap-1.5';
+      const inactiveCls = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition nav-btn-inactive flex items-center gap-1.5';
+
+      navProjects.className = (sectionId === 'sectionProjectsList' || sectionId === 'sectionProjectDetail') ? activeCls : inactiveCls;
+      navUpload.className = (sectionId === 'sectionStudentUpload') ? activeCls : inactiveCls;
+      navAccount.className = (sectionId === 'sectionAccount') ? activeCls : inactiveCls;
+      if (state.currentUserRole !== 'student') {
+        navUpload.classList.add('hidden');
+      }
+    }
+
+    function updateHeaderIdentity() {
+      const role = state.currentUserRole;
+      if (!role) return;
+      const isProf = role === 'professor';
+      const acc = state.accounts[role];
+      document.getElementById('headerRoleBadge').textContent = isProf ? 'پنل استاد' : 'پنل دانشجو';
+      document.getElementById('headerUserFullName').textContent = acc.displayName;
+    }
+
+    function enterPortal(role) {
+      state.currentUserRole = role;
+      document.getElementById('loginView').classList.add('hidden');
+      document.getElementById('appView').classList.remove('hidden');
+
+      const isProf = role === 'professor';
+      updateHeaderIdentity();
+      document.getElementById('navProjectsBtn').textContent = isProf ? 'پروژه‌های آپلود شده' : 'پروژه‌های من';
+      document.getElementById('navNewUploadBtn').classList.toggle('hidden', isProf);
+
+      const quickBtn = document.getElementById('studentQuickNewProjectBtn');
+      if (isProf) {
+        quickBtn.classList.add('hidden');
+        quickBtn.classList.remove('flex');
+        document.getElementById('listTitleHeading').textContent = 'لیست پروژه‌های آپلود شده دانشجویان';
+        document.getElementById('colPersonLabel').textContent = 'نام دانشجو';
+      } else {
+        quickBtn.classList.remove('hidden');
+        quickBtn.classList.add('flex');
+        document.getElementById('listTitleHeading').textContent = 'لیست پروژه‌های آپلود شده من';
+        document.getElementById('colPersonLabel').textContent = 'نام استاد';
+        document.getElementById('stuFullNameInput').value = state.accounts.student.displayName;
+      }
+
+      // Sync Account Settings Inputs
+      const acc = state.accounts[role];
+      document.getElementById('accDisplayName').value = acc.displayName;
+      document.getElementById('accNewUsername').value = acc.username;
+      document.getElementById('accNewPassword').value = acc.password;
+      document.getElementById('accountRoleSub').textContent =
+        isProf ? 'ویرایش نام و مشخصات ورود استاد' : 'ویرایش نام و مشخصات ورود دانشجو';
+
+      renderProjectsList();
+      showSection('sectionProjectsList');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // =========================================================
+    // RENDER PROJECTS LIST
+    // =========================================================
+    function renderProjectsList() {
+      const container = document.getElementById('projectsListContainer');
+      const isProf = state.currentUserRole === 'professor';
+
+      container.innerHTML = state.projects.map(p => {
+        const badge = getStatusBadge(p.status);
+        const personText = isProf ? p.studentName : p.professorName;
+        const personLabelMobile = isProf ? 'دانشجو' : 'استاد';
+
+        return `
+          <div data-project-row="${p.id}" class="lux-card lux-card-interactive rounded-2xl px-5 py-4 cursor-pointer grid grid-cols-1 sm:grid-cols-12 items-center gap-3">
+            <!-- اسم پروژه -->
+            <div class="sm:col-span-4">
+              <h3 class="text-sm sm:text-base font-bold text-primary-lux">${p.projectName}</h3>
+              <span class="text-[11px] text-muted-lux font-mono sm:hidden">${personLabelMobile}: ${personText} • کلاس: ${p.className}</span>
+            </div>
+
+            <!-- نام دانشجو (در پنل استاد) / نام استاد (در پنل دانشجو) -->
+            <div class="hidden sm:block sm:col-span-3 text-xs sm:text-sm text-secondary-lux">
+              ${personText}
+            </div>
+
+            <!-- نام کلاس -->
+            <div class="hidden sm:block sm:col-span-2 text-xs text-muted-lux">
+              ${p.className}
+            </div>
+
+            <!-- ورژن‌بندی -->
+            <div class="sm:col-span-1 flex sm:justify-center">
+              <span class="font-mono text-xs px-2.5 py-0.5 rounded-lg gold-pill">${p.version}</span>
+            </div>
+
+            <!-- وضعیت و دکمه جزئیات -->
+            <div class="sm:col-span-2 flex items-center justify-between sm:justify-end gap-2">
+              <span class="text-[11px] px-2.5 py-1 rounded-full font-medium ${badge.cls}">${badge.label}</span>
+              <i data-lucide="chevron-left" class="w-4 h-4 text-muted-lux"></i>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // =========================================================
+    // RENDER PROJECT DETAIL VIEW (توضیحات، ارزیابی، ورژن‌بندی، اعلانات)
+    // =========================================================
+    function openProjectDetail(projectId) {
+      state.selectedProjectId = projectId;
+      const p = state.projects.find(item => item.id === projectId);
+      if (!p) return;
+
+      const isProf = state.currentUserRole === 'professor';
+      const badge = getStatusBadge(p.status);
+
+      document.getElementById('detailVersionBadge').textContent = `ورژن فعلی: ${p.version}`;
+      document.getElementById('detailProjectName').textContent = p.projectName;
+      document.getElementById('detailStudentName').textContent = p.studentName;
+      document.getElementById('detailProfName').textContent = p.professorName;
+      document.getElementById('detailClassName').textContent = p.className;
+      document.getElementById('detailScoreDisplay').textContent = p.score > 0 ? `${p.score} / 20` : 'بررسی نشده';
+      document.getElementById('detailDescriptionText').textContent = p.description;
+      document.getElementById('detailFileName').textContent = `فایل پیوست: ${p.fileName}`;
+      document.getElementById('detailUpdatedTime').textContent = `آخرین بروزرسانی: ${p.updatedAt}`;
+
+      // Evaluation Status & View vs Edit
+      const statusEl = document.getElementById('detailEvalStatusBadge');
+      statusEl.className = `text-xs px-2.5 py-0.5 rounded-full font-medium ${badge.cls}`;
+      statusEl.textContent = badge.label;
+
+      document.getElementById('studentEvaluationReadView').classList.toggle('hidden', isProf);
+      document.getElementById('profEvaluationForm').classList.toggle('hidden', !isProf);
+
+      if (isProf) {
+        document.getElementById('profScoreInput').value = p.score || 18;
+        document.getElementById('profStatusSelect').value = p.status;
+        document.getElementById('profCommentInput').value = p.evalComment;
+      } else {
+        document.getElementById('stuViewScore').textContent = p.score > 0 ? `${p.score} از ۲۰` : 'در انتظار نمره‌دهی';
+        document.getElementById('stuViewComment').textContent = p.evalComment;
+      }
+
+      // Versioning & History List
+      document.getElementById('toggleNewVersionBoxBtn').classList.toggle('hidden', isProf);
+      document.getElementById('quickNewVersionForm').classList.add('hidden');
+      document.getElementById('detailVersionsTimeline').innerHTML = p.versionsHistory.map((v, idx) => `
+        <div class="p-3 rounded-xl lux-subcard ${idx === 0 ? 'border-gold-500/40' : ''} flex items-start justify-between gap-3">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-xs font-bold gold-text">${v.ver}</span>
+              <span class="font-mono text-[11px] text-muted-lux">${v.file}</span>
+            </div>
+            <p class="text-xs text-secondary-lux">${v.note}</p>
+          </div>
+          <span class="font-mono text-[11px] text-muted-lux shrink-0">${v.date}</span>
+        </div>
+      `).join('');
+
+      // Notifications Section
+      const profNotifForm = document.getElementById('profSendNotifForm');
+      if (isProf) {
+        profNotifForm.classList.remove('hidden');
+        profNotifForm.classList.add('flex');
+      } else {
+        profNotifForm.classList.add('hidden');
+        profNotifForm.classList.remove('flex');
+      }
+
+      document.getElementById('detailNotificationsList').innerHTML = p.notifications.map(n => `
+        <div class="p-3.5 rounded-xl lux-subcard flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded gold-pill font-medium">${n.sender}</span>
+            <span class="text-primary-lux">${n.text}</span>
+          </div>
+          <span class="font-mono text-[11px] text-muted-lux shrink-0">${n.date}</span>
+        </div>
+      `).join('');
+
+      showSection('sectionProjectDetail');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // =========================================================
+    // EVENT LISTENERS
+    // =========================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) lucide.createIcons();
+
+      // Login Submit
+      document.getElementById('loginForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const u = document.getElementById('loginUsername').value.trim();
+        const p = document.getElementById('loginPassword').value.trim();
+        const err = document.getElementById('loginErrorMsg');
+
+        if (u === state.accounts.professor.username && p === state.accounts.professor.password) {
+          err.classList.add('hidden');
+          enterPortal('professor');
+          showToast(`خوش آمدید، ${state.accounts.professor.displayName}`);
+        } else if (u === state.accounts.student.username && p === state.accounts.student.password) {
+          err.classList.add('hidden');
+          enterPortal('student');
+          showToast(`خوش آمدید، ${state.accounts.student.displayName}`);
+        } else {
+          err.classList.remove('hidden');
+        }
+      });
+
+      // Logout
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        state.currentUserRole = null;
+        document.getElementById('appView').classList.add('hidden');
+        document.getElementById('loginView').classList.remove('hidden');
+        document.getElementById('loginPassword').value = '';
+      });
+
+      // Theme Switch
+      document.getElementById('themeSwitchBtn').addEventListener('click', () => {
+        document.documentElement.classList.toggle('light');
+        document.documentElement.classList.toggle('dark');
+      });
+
+      // Top Navigation Buttons
+      document.getElementById('navProjectsBtn').addEventListener('click', () => {
+        renderProjectsList();
+        showSection('sectionProjectsList');
+      });
+      document.getElementById('navNewUploadBtn').addEventListener('click', () => {
+        document.getElementById('stuFullNameInput').value = state.accounts.student.displayName;
+        showSection('sectionStudentUpload');
+      });
+      document.getElementById('studentQuickNewProjectBtn').addEventListener('click', () => {
+        document.getElementById('stuFullNameInput').value = state.accounts.student.displayName;
+        showSection('sectionStudentUpload');
+      });
+      document.getElementById('cancelUploadBtn').addEventListener('click', () => {
+        showSection('sectionProjectsList');
+      });
+      document.getElementById('navAccountBtn').addEventListener('click', () => {
+        const acc = state.accounts[state.currentUserRole];
+        document.getElementById('accDisplayName').value = acc.displayName;
+        document.getElementById('accNewUsername').value = acc.username;
+        document.getElementById('accNewPassword').value = acc.password;
+        showSection('sectionAccount');
+      });
+
+      // Click on Project Item in List
+      document.getElementById('projectsListContainer').addEventListener('click', (e) => {
+        const row = e.target.closest('[data-project-row]');
+        if (!row) return;
+        openProjectDetail(row.getAttribute('data-project-row'));
+      });
+
+      // Back to Projects List
+      document.getElementById('backToListBtn').addEventListener('click', () => {
+        renderProjectsList();
+        showSection('sectionProjectsList');
+      });
+
+      // Professor Evaluation Save
+      document.getElementById('profEvaluationForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const p = state.projects.find(item => item.id === state.selectedProjectId);
+        if (!p) return;
+
+        const scoreVal = parseFloat(document.getElementById('profScoreInput').value) || 0;
+        const statusVal = document.getElementById('profStatusSelect').value;
+        const commentVal = document.getElementById('profCommentInput').value.trim();
+
+        p.score = scoreVal;
+        p.status = statusVal;
+        p.evalComment = commentVal;
+
+        const badge = getStatusBadge(statusVal);
+        p.notifications.unshift({
+          text: `ارزیابی ${state.accounts.professor.displayName} ثبت شد: نمره ${scoreVal} از ۲۰ (${badge.label}) — ${commentVal}`,
+          date: 'هم‌اکنون',
+          sender: 'استاد'
+        });
+
+        openProjectDetail(p.id);
+        showToast('ارزیابی و نمره پروژه با موفقیت ثبت شد.');
+      });
+
+      // Professor Send Custom Notification on Project
+      document.getElementById('profSendNotifForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const p = state.projects.find(item => item.id === state.selectedProjectId);
+        const input = document.getElementById('profNotifInput');
+        if (!p || !input.value.trim()) return;
+
+        p.notifications.unshift({
+          text: input.value.trim(),
+          date: 'هم‌اکنون',
+          sender: 'استاد'
+        });
+        input.value = '';
+        openProjectDetail(p.id);
+        showToast('اعلان جدید برای دانشجو ثبت شد.');
+      });
+
+      // Student Quick New Version inside Project Detail
+      document.getElementById('toggleNewVersionBoxBtn').addEventListener('click', () => {
+        document.getElementById('quickNewVersionForm').classList.toggle('hidden');
+      });
+
+      document.getElementById('quickNewVersionForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const p = state.projects.find(item => item.id === state.selectedProjectId);
+        if (!p) return;
+
+        const verTag = document.getElementById('quickVerTag').value.trim();
+        const verFile = document.getElementById('quickVerFile').value.trim() || `Project_${verTag}.zip`;
+        const verNote = document.getElementById('quickVerNote').value.trim();
+
+        p.version = verTag;
+        p.fileName = verFile;
+        p.updatedAt = 'هم‌اکنون';
+        p.status = 'pending';
+        p.versionsHistory.unshift({
+          ver: verTag,
+          date: 'امروز',
+          file: verFile,
+          note: verNote
+        });
+        p.notifications.unshift({
+          text: `نسخه جدید ${verTag} توسط ${state.accounts.student.displayName} بارگذاری شد: ${verNote}`,
+          date: 'هم‌اکنون',
+          sender: 'دانشجو'
+        });
+
+        document.getElementById('quickVerTag').value = '';
+        document.getElementById('quickVerFile').value = '';
+        document.getElementById('quickVerNote').value = '';
+
+        openProjectDetail(p.id);
+        showToast(`ورژن جدید ${verTag} با موفقیت ثبت شد.`);
+      });
+
+      // Student Upload New Project Form
+      document.getElementById('studentNewProjectForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const studentName = document.getElementById('stuFullNameInput').value.trim();
+        const professorName = document.getElementById('stuProfNameInput').value.trim();
+        const projectName = document.getElementById('stuProjectNameInput').value.trim();
+        const version = document.getElementById('stuVersionInput').value.trim() || 'v1.0';
+        const className = document.getElementById('stuClassNameInput').value.trim();
+        const description = document.getElementById('stuDescriptionInput').value.trim();
+        const fileEl = document.getElementById('stuFileInput');
+        const uploadedFileName = (fileEl.files && fileEl.files[0])
+          ? fileEl.files[0].name
+          : `${projectName.slice(0, 12).replace(/\s+/g, '_')}_${version}.zip`;
+
+        const newId = `PRJ-0${state.projects.length + 1}`;
+        state.projects.unshift({
+          id: newId,
+          studentName,
+          professorName,
+          className,
+          projectName,
+          version,
+          fileName: uploadedFileName,
+          updatedAt: 'هم‌اکنون',
+          description,
+          status: 'pending',
+          score: 0,
+          evalComment: 'هنوز توسط استاد بررسی نشده است.',
+          versionsHistory: [
+            { ver: version, date: 'امروز', file: uploadedFileName, note: description }
+          ],
+          notifications: [
+            { text: `پروژه «${projectName}» با نسخه ${version} توسط ${studentName} آپلود شد.`, date: 'هم‌اکنون', sender: 'سیستم' }
+          ]
+        });
+
+        document.getElementById('stuProjectNameInput').value = '';
+        document.getElementById('stuDescriptionInput').value = '';
+
+        renderProjectsList();
+        showSection('sectionProjectsList');
+        showToast('پروژه جدید با موفقیت آپلود شد.');
+      });
+
+      // Account Settings Form (ویرایش نام و نام خانوادگی، نام کاربری و رمز عبور)
+      document.getElementById('accountSettingsForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const role = state.currentUserRole;
+        if (!role) return;
+
+        const newName = document.getElementById('accDisplayName').value.trim();
+        const newU = document.getElementById('accNewUsername').value.trim();
+        const newP = document.getElementById('accNewPassword').value.trim();
+        if (!newName || !newU || !newP) return;
+
+        state.accounts[role].displayName = newName;
+        state.accounts[role].username = newU;
+        state.accounts[role].password = newP;
+        saveAccounts();
+        updateHeaderIdentity();
+
+        showToast('مشخصات فردی، نام کاربری و رمز عبور با موفقیت ذخیره شد.');
+      });
+    });
+  </script>
+</body>
+</html>
